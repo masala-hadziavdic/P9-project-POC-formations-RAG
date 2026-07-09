@@ -12,3 +12,4 @@ datasets
 ragas
 pytest
 scikit-learn
+langchain-community
