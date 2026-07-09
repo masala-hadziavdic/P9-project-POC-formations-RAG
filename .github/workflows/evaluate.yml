@@ -9,6 +9,7 @@ on:
     branches:
       - main
 
+
 jobs:
   evaluate:
 
@@ -16,28 +17,68 @@ jobs:
 
     steps:
 
+      # ==========================================
+      # Checkout
+      # ==========================================
       - name: Checkout repository
         uses: actions/checkout@v4
 
+
+      # ==========================================
+      # Python
+      # ==========================================
       - name: Setup Python
         uses: actions/setup-python@v5
         with:
           python-version: "3.12"
 
+
+      # ==========================================
+      # Dependencies
+      # ==========================================
       - name: Install dependencies
         run: |
           python -m pip install --upgrade pip
           pip install -r requirements.txt
 
+
+      # ==========================================
+      # Configure Python path
+      # ==========================================
+      - name: Configure PYTHONPATH
+        run: |
+          echo "PYTHONPATH=${{ github.workspace }}" >> $GITHUB_ENV
+
+
+      # ==========================================
+      # Build RAG index
+      # Recrée chunks.pkl, embeddings, index FAISS...
+      # ==========================================
+      - name: Build RAG index
+        run: |
+          python scripts/build_index.py
+
+
+      # ==========================================
+      # Start API
+      # ==========================================
       - name: Start FastAPI
         run: |
           uvicorn api.main:app --host 127.0.0.1 --port 8000 &
           sleep 20
 
+
+      # ==========================================
+      # Tests
+      # ==========================================
       - name: Run unit tests
         run: |
           pytest tests/
 
+
+      # ==========================================
+      # Evaluation
+      # ==========================================
       - name: Evaluate RAG
         run: |
           python scripts/evaluate_rag.py
