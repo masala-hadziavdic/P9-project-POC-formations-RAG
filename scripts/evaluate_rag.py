@@ -1,20 +1,24 @@
 import json
+import time
 import requests
+import numpy as np
 
-from datasets import Dataset
-from ragas import evaluate
-from ragas.metrics import context_utilization
+from sentence_transformers import SentenceTransformer
+from sklearn.metrics.pairwise import cosine_similarity
 
 # ==========================================================
 # CONFIG
 # ==========================================================
 
 API_URL = "http://127.0.0.1:8000/ask"
-
 ANNOTATED_DATASET = "data/annotated_dataset.json"
 
+model = SentenceTransformer(
+    "paraphrase-multilingual-MiniLM-L12-v2"
+)
+
 # ==========================================================
-# Charger le dataset annoté
+# Charger le dataset
 # ==========================================================
 
 with open(ANNOTATED_DATASET, "r", encoding="utf-8") as f:
@@ -27,105 +31,113 @@ with open(ANNOTATED_DATASET, "r", encoding="utf-8") as f:
 
 def call_api(question):
 
+    start = time.perf_counter()
+
     response = requests.post(
-
         API_URL,
-
-        json={
-            "question": question,
-            "k": 5
-        }
-
+        json={"question": question}
     )
+
+    elapsed = time.perf_counter() - start
 
     response.raise_for_status()
 
-    return response.json()
+    return response.json(), elapsed
 
 
 # ==========================================================
-# Construire Dataset RAGAS
+# Evaluation
 # ==========================================================
 
-def build_dataset():
+semantic_scores = []
+exact_matches = 0
+partial_matches = 0
+retrieval_recalls = []
+response_times = []
 
-    questions = []
+print("=" * 60)
+print("RAG EVALUATION")
+print("=" * 60)
 
-    answers = []
+for sample in annotated_data:
 
-    contexts = []
+    question = sample["question"]
+    expected = sample["expected_answer"]
 
-    ground_truths = []
+    print(f"\nQuestion : {question}")
 
-    for sample in annotated_data:
+    result, elapsed = call_api(question)
 
-        print(f"Question : {sample['question']}")
+    response_times.append(elapsed)
 
-        result = call_api(sample["question"])
+    titles = [r["title"] for r in result["results"]]
+    answer = " ".join(titles)
 
-        answer = "\n".join(
+    # ======================================================
+    # Exact Match
+    # ======================================================
 
-            r["title"]
+    if expected.lower() == answer.lower():
+        exact_matches += 1
 
-            for r in result["results"]
+    # ======================================================
+    # Partial Match
+    # ======================================================
 
-        )
+    if expected.lower() in answer.lower():
+        partial_matches += 1
 
-        context = [
+    # ======================================================
+    # Recall@5
+    # ======================================================
 
-            r["chunk"]
-
-            for r in result["results"]
-
-        ]
-
-        questions.append(sample["question"])
-
-        answers.append(answer)
-
-        contexts.append(context)
-
-        ground_truths.append(sample["expected_answer"])
-
-    return Dataset.from_dict(
-
-        {
-
-            "question": questions,
-
-            "answer": answers,
-
-            "contexts": contexts,
-
-            "ground_truth": ground_truths
-
-        }
-
+    recall = any(
+        expected.lower() in title.lower()
+        for title in titles
     )
 
+    retrieval_recalls.append(int(recall))
+
+    # ======================================================
+    # Similarité sémantique
+    # ======================================================
+
+    emb_expected = model.encode([expected])
+
+    emb_answer = model.encode([answer])
+
+    similarity = cosine_similarity(
+        emb_expected,
+        emb_answer
+    )[0][0]
+
+    semantic_scores.append(similarity)
+
+    print(f"Recall@5 : {recall}")
+    print(f"Semantic similarity : {similarity:.3f}")
+    print(f"Response time : {elapsed:.3f} sec")
 
 # ==========================================================
-# MAIN
+# Résultats
 # ==========================================================
 
-dataset = build_dataset()
+n = len(annotated_data)
 
-result = evaluate(
+print("\n")
+print("=" * 60)
+print("FINAL RESULTS")
+print("=" * 60)
 
-    dataset,
+print(f"Nombre de questions                : {n}")
 
-    metrics=[
+print(f"Exact Match                        : {exact_matches}/{n} ({100*exact_matches/n:.1f} %)")
 
-        context_utilization
+print(f"Partial Match                      : {partial_matches}/{n} ({100*partial_matches/n:.1f} %)")
 
-    ]
+print(f"Recall@5 moyen                     : {100*np.mean(retrieval_recalls):.1f} %")
 
-)
+print(f"Similarité sémantique moyenne      : {np.mean(semantic_scores):.3f}")
 
-print("\n==========================")
+print(f"Temps de réponse moyen             : {np.mean(response_times):.3f} sec")
 
-print("RAGAS RESULTS")
-
-print("==========================")
-
-print(result)
+print("=" * 60)
