@@ -18,7 +18,7 @@ model = SentenceTransformer(
 )
 
 # ==========================================================
-# Charger le dataset
+# DATASET
 # ==========================================================
 
 with open(ANNOTATED_DATASET, "r", encoding="utf-8") as f:
@@ -26,7 +26,7 @@ with open(ANNOTATED_DATASET, "r", encoding="utf-8") as f:
 
 
 # ==========================================================
-# Appel API
+# API
 # ==========================================================
 
 def call_api(question):
@@ -46,23 +46,38 @@ def call_api(question):
 
 
 # ==========================================================
-# Evaluation
+# EVALUATION
 # ==========================================================
 
+theme_scores = []
+
+location_scores = []
+
 semantic_scores = []
-exact_matches = 0
-partial_matches = 0
-retrieval_recalls = []
+
 response_times = []
 
-print("=" * 60)
+returned_docs = []
+
+print("=" * 70)
 print("RAG EVALUATION")
-print("=" * 60)
+print("=" * 70)
 
 for sample in annotated_data:
 
     question = sample["question"]
-    expected = sample["expected_answer"]
+
+    expected_answer = sample["expected_answer"]
+
+    expected_themes = [
+        t.lower()
+        for t in sample["expected_themes"]
+    ]
+
+    expected_locations = [
+        l.lower()
+        for l in sample["expected_locations"]
+    ]
 
     print(f"\nQuestion : {question}")
 
@@ -70,74 +85,117 @@ for sample in annotated_data:
 
     response_times.append(elapsed)
 
-    titles = [r["title"] for r in result["results"]]
-    answer = " ".join(titles)
+    returned_docs.append(result["n_results"])
 
-    # ======================================================
-    # Exact Match
-    # ======================================================
-
-    if expected.lower() == answer.lower():
-        exact_matches += 1
-
-    # ======================================================
-    # Partial Match
-    # ======================================================
-
-    if expected.lower() in answer.lower():
-        partial_matches += 1
-
-    # ======================================================
-    # Recall@5
-    # ======================================================
-
-    recall = any(
-        expected.lower() in title.lower()
-        for title in titles
+    titles = " ".join(
+        r["title"]
+        for r in result["results"]
     )
 
-    retrieval_recalls.append(int(recall))
+    chunks = " ".join(
+        r["chunk"]
+        for r in result["results"]
+    )
+
+    cities = [
+        r["city"].lower()
+        for r in result["results"]
+    ]
+
+    full_text = (titles + " " + chunks).lower()
 
     # ======================================================
-    # Similarité sémantique
+    # THEMES
     # ======================================================
 
-    emb_expected = model.encode([expected])
+    if expected_themes:
 
-    emb_answer = model.encode([answer])
+        found = sum(
+            theme in full_text
+            for theme in expected_themes
+        )
+
+        theme_score = found / len(expected_themes)
+
+    else:
+
+        theme_score = 1.0
+
+    theme_scores.append(theme_score)
+
+    # ======================================================
+    # LOCATIONS
+    # ======================================================
+
+    if expected_locations:
+
+        found = sum(
+            city in cities
+            for city in expected_locations
+        )
+
+        location_score = found / len(expected_locations)
+
+    else:
+
+        location_score = 1.0
+
+    location_scores.append(location_score)
+
+    # ======================================================
+    # SEMANTIC SIMILARITY
+    # ======================================================
+
+    emb_expected = model.encode(
+        [expected_answer],
+        normalize_embeddings=True
+    )
+
+    emb_chunk = model.encode(
+        [chunks],
+        normalize_embeddings=True
+    )
 
     similarity = cosine_similarity(
         emb_expected,
-        emb_answer
+        emb_chunk
     )[0][0]
 
     semantic_scores.append(similarity)
 
-    print(f"Recall@5 : {recall}")
-    print(f"Semantic similarity : {similarity:.3f}")
-    print(f"Response time : {elapsed:.3f} sec")
+    print(f"Themes      : {theme_score:.2f}")
+
+    print(f"Locations   : {location_score:.2f}")
+
+    print(f"Semantic    : {similarity:.3f}")
+
+    print(f"Results     : {result['n_results']}")
+
+    print(f"Time        : {elapsed:.2f} sec")
+
 
 # ==========================================================
-# Résultats
+# SUMMARY
 # ==========================================================
 
-n = len(annotated_data)
+print()
 
-print("\n")
-print("=" * 60)
+print("=" * 70)
+
 print("FINAL RESULTS")
-print("=" * 60)
 
-print(f"Nombre de questions                : {n}")
+print("=" * 70)
 
-print(f"Exact Match                        : {exact_matches}/{n} ({100*exact_matches/n:.1f} %)")
+print(f"Questions évaluées                : {len(annotated_data)}")
 
-print(f"Partial Match                      : {partial_matches}/{n} ({100*partial_matches/n:.1f} %)")
+print(f"Couverture moyenne des thèmes     : {100*np.mean(theme_scores):.1f} %")
 
-print(f"Recall@5 moyen                     : {100*np.mean(retrieval_recalls):.1f} %")
+print(f"Exactitude des localisations      : {100*np.mean(location_scores):.1f} %")
 
-print(f"Similarité sémantique moyenne      : {np.mean(semantic_scores):.3f}")
+print(f"Similarité sémantique moyenne     : {np.mean(semantic_scores):.3f}")
 
-print(f"Temps de réponse moyen             : {np.mean(response_times):.3f} sec")
+print(f"Nombre moyen de résultats         : {np.mean(returned_docs):.2f}")
 
-print("=" * 60)
+print(f"Temps moyen de réponse            : {np.mean(response_times):.2f} sec")
+
+print("=" * 70)
