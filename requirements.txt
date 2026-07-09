@@ -1,9 +1,14 @@
 fastapi
 uvicorn
 sentence-transformers
+transformers
+torch
+langchain
 faiss-cpu
 numpy
-pydantic
-requests
-ragas
 pandas
+requests
+datasets
+ragas
+pytest
+scikit-learn

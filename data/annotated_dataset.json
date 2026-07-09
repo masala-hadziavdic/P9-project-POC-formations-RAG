@@ -1,0 +1,164 @@
+[
+  {
+    "id": 1,
+    "difficulty": "easy",
+    "category": "general",
+    "question": "Quelles formations sont proposées ?",
+    "expected_answer": "Le système doit proposer plusieurs formations disponibles.",
+    "expected_themes": ["formation"],
+    "expected_locations": []
+  },
+  {
+    "id": 2,
+    "difficulty": "easy",
+    "category": "financement",
+    "question": "Quelles formations sont financées ?",
+    "expected_answer": "Le système doit proposer des formations financées.",
+    "expected_themes": ["financement"],
+    "expected_locations": []
+  },
+  {
+    "id": 3,
+    "difficulty": "easy",
+    "category": "information",
+    "question": "Je cherche une réunion d'information.",
+    "expected_answer": "Le système doit proposer une ou plusieurs réunions d'information.",
+    "expected_themes": ["réunion d'information"],
+    "expected_locations": []
+  },
+  {
+    "id": 4,
+    "difficulty": "medium",
+    "category": "informatique",
+    "question": "Quelles formations informatiques sont proposées ?",
+    "expected_answer": "Le système doit recommander des formations en informatique.",
+    "expected_themes": ["informatique", "numérique"],
+    "expected_locations": []
+  },
+  {
+    "id": 5,
+    "difficulty": "medium",
+    "category": "informatique",
+    "question": "Je souhaite devenir technicien informatique.",
+    "expected_answer": "Le système doit recommander une formation permettant de devenir technicien informatique.",
+    "expected_themes": ["technicien", "informatique"],
+    "expected_locations": []
+  },
+  {
+    "id": 6,
+    "difficulty": "medium",
+    "category": "hotellerie",
+    "question": "Existe-t-il des formations en hôtellerie-restauration ?",
+    "expected_answer": "Le système doit proposer des formations en hôtellerie-restauration.",
+    "expected_themes": ["hôtellerie", "restauration"],
+    "expected_locations": []
+  },
+  {
+    "id": 7,
+    "difficulty": "medium",
+    "category": "btp",
+    "question": "Quelles formations dans le BTP sont proposées ?",
+    "expected_answer": "Le système doit recommander des formations du secteur BTP.",
+    "expected_themes": ["btp", "bâtiment"],
+    "expected_locations": []
+  },
+  {
+    "id": 8,
+    "difficulty": "easy",
+    "category": "commerce",
+    "question": "Je cherche une formation dans le commerce.",
+    "expected_answer": "Le système doit recommander des formations dans le commerce.",
+    "expected_themes": ["commerce"],
+    "expected_locations": []
+  },
+  {
+    "id": 9,
+    "difficulty": "medium",
+    "category": "localisation",
+    "question": "Quelles formations sont proposées à Marseille ?",
+    "expected_answer": "Le système doit proposer les formations disponibles à Marseille.",
+    "expected_themes": ["formation"],
+    "expected_locations": ["Marseille"]
+  },
+  {
+    "id": 10,
+    "difficulty": "medium",
+    "category": "localisation",
+    "question": "Quelles formations sont proposées à Paris ?",
+    "expected_answer": "Le système doit proposer les formations disponibles à Paris.",
+    "expected_themes": ["formation"],
+    "expected_locations": ["Paris"]
+  },
+  {
+    "id": 11,
+    "difficulty": "medium",
+    "category": "date",
+    "question": "Quelles formations commencent en septembre ?",
+    "expected_answer": "Le système doit proposer les formations commençant en septembre.",
+    "expected_themes": ["septembre"],
+    "expected_locations": []
+  },
+  {
+    "id": 12,
+    "difficulty": "medium",
+    "category": "date",
+    "question": "Quelles formations commencent en novembre ?",
+    "expected_answer": "Le système doit proposer les formations commençant en novembre.",
+    "expected_themes": ["novembre"],
+    "expected_locations": []
+  },
+  {
+    "id": 13,
+    "difficulty": "hard",
+    "category": "informatique",
+    "question": "Je cherche une formation en informatique à Marseille.",
+    "expected_answer": "Le système doit recommander une formation informatique à Marseille.",
+    "expected_themes": ["informatique"],
+    "expected_locations": ["Marseille"]
+  },
+  {
+    "id": 14,
+    "difficulty": "hard",
+    "category": "informatique",
+    "question": "Je cherche une formation financée en informatique.",
+    "expected_answer": "Le système doit recommander une formation informatique financée.",
+    "expected_themes": ["informatique", "financement"],
+    "expected_locations": []
+  },
+  {
+    "id": 15,
+    "difficulty": "hard",
+    "category": "hotellerie",
+    "question": "Existe-t-il une formation en hôtellerie à Marseille ?",
+    "expected_answer": "Le système doit proposer une formation en hôtellerie à Marseille.",
+    "expected_themes": ["hôtellerie"],
+    "expected_locations": ["Marseille"]
+  },
+  {
+    "id": 16,
+    "difficulty": "hard",
+    "category": "btp",
+    "question": "Je suis débutant et je cherche une formation dans le bâtiment.",
+    "expected_answer": "Le système doit proposer une formation débutant dans le bâtiment.",
+    "expected_themes": ["bâtiment"],
+    "expected_locations": []
+  },
+  {
+    "id": 17,
+    "difficulty": "hard",
+    "category": "reconversion",
+    "question": "Je souhaite me reconvertir dans le numérique avec une formation financée.",
+    "expected_answer": "Le système doit proposer une formation financée pour une reconversion dans le numérique.",
+    "expected_themes": ["numérique", "financement"],
+    "expected_locations": []
+  },
+  {
+    "id": 18,
+    "difficulty": "hard",
+    "category": "informatique",
+    "question": "Je cherche une formation en informatique à Marseille qui commence en septembre.",
+    "expected_answer": "Le système doit proposer une formation informatique à Marseille commençant en septembre.",
+    "expected_themes": ["informatique", "septembre"],
+    "expected_locations": ["Marseille"]
+  }
+]
