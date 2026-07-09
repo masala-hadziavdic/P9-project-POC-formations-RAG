@@ -93,60 +93,50 @@ BASE VECTORIELLE FAISS
 | Conteneurisation | Docker | latest | Déploiement reproductible |
 | Gestionnaire de dépendances | uv / pip | latest | Installation des packages |
 
-🗄️ Schéma UML 
+🗄️ Architecture du système RAG
 
+
+```mermaid
+flowchart LR
+
+OA["🌍 OpenAgenda API"]
+BUILD["⚙️ build_index.py"]
+
+CHUNK["📄 Chunking"]
+EMB["🧠 SentenceTransformer"]
+FAISS["🗄️ FAISS"]
+
+USER["👤 Utilisateur"]
+API["⚡ FastAPI (/ask)"]
+RET["🔎 Retrieval"]
+RERANK["📑 CrossEncoder"]
+LLM["🤖 TinyLlama"]
+JSON["📦 JSON Response"]
+
+EVAL["📊 evaluate_rag.py"]
+RAGAS["📈 RAGAS"]
+
+DOCKER["🐳 Docker"]
+
+OA --> BUILD
+BUILD --> CHUNK
+CHUNK --> EMB
+EMB --> FAISS
+
+USER --> API
+API --> RET
+RET --> FAISS
+FAISS --> RET
+RET --> RERANK
+RERANK --> LLM
+LLM --> API
+API --> JSON
+
+EVAL --> API
+EVAL --> RAGAS
+
+DOCKER --> API
 ```
-config:
-  layout: elk
----
-flowchart TD
-    A[OpenAgenda API<br/>Evénements / Formations] --> B[Prétraitement<br/>Nettoyage & Filtrage]
-    B --> C[Chunking des textes]
-    C --> D[Embeddings<br/>Sentence Transformers]
-    D --> E[FAISS Vector Store]
-    B --> F[Metadata<br/>Ville, date, URL...]
-    F --> E
-    G[Question utilisateur] --> H[FastAPI /ask]
-    H --> I["retrieve()"]
-    I --> E
-    E --> J[Top-K documents]
-    J --> K[CrossEncoder Re-ranking]
-    K --> L[Réponse augmentée]
-    L --> H
-    H --> M[JSON Response]
-    N[/rebuild endpoint/] --> O[build_index.py]
-    O --> E
-    P[evaluate_rag.py] --> H
-    P --> Q[RAGAS Metrics]
-    R[Docker Container] --> H
-    
-    classDef dataSource stroke:#818cf8,fill:#eef2ff
-    classDef processing stroke:#2dd4bf,fill:#f0fdfa
-    classDef storage stroke:#a78bfa,fill:#f5f3ff
-    classDef retrieval stroke:#fb923c,fill:#fff7ed
-    classDef response stroke:#4ade80,fill:#f0fdf4
-    classDef evaluation stroke:#facc15,fill:#fefce8
-    classDef deployment stroke:#38bdf8,fill:#f0f9ff
-    
-    class A dataSource
-    class B,C,D processing
-    class E storage
-    class F,G,H,I,J,K,L retrieval
-    class M response
-    class N,O deployment
-    class P,Q evaluation
-    class R deployment
-```
-## Metriques de projet/encadré technique
-
-- Nombre de chunks : **16 511**
-- Taille des chunks : **500 caractères**
-- Overlap : **50 caractères**
-- Dimension des embeddings : **384**
-- Métrique FAISS : **L2 Distance**
-- Nombre de résultats récupérés : **Top-K = 5**
-- Nombre de candidats avant reranking : **1000**
-
 
 ⚙️ Stack technique & versions
 Technologie	Version
