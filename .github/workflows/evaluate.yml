@@ -15,6 +15,9 @@ jobs:
 
     runs-on: ubuntu-latest
 
+    env:
+      MISTRAL_API_KEY: ${{ secrets.MISTRAL_API_KEY }}
+
     steps:
 
       # ==========================================
@@ -79,6 +82,10 @@ jobs:
       # ==========================================
       # Evaluation
       # ==========================================
-      - name: Evaluate RAG
+      - name: Evaluate RAG (classical)
         run: |
           python scripts/evaluate_rag.py
+
+      - name: Evaluate RAG (RAGAS)
+        run: |
+          python scripts/evaluate_rag_llm.py
