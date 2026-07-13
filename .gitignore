@@ -22,7 +22,9 @@ __pycache__/
 data/evenments_publics_openagenda.json
 data/exploration_stats.json
 
-
+.env
+.env.*
+*.env
 
 # ==========================================================
 # Personal notes
