@@ -55,7 +55,6 @@ jobs:
 
       # ==========================================
       # Build RAG index
-      # Recrée chunks.pkl, embeddings, index FAISS...
       # ==========================================
       - name: Build RAG index
         run: |
@@ -80,12 +79,28 @@ jobs:
 
 
       # ==========================================
-      # Evaluation
+      # Evaluation classique
       # ==========================================
       - name: Evaluate RAG (classical)
         run: |
           python scripts/evaluate_rag.py
 
+
+      # ==========================================
+      # Evaluation Mistral
+      # ==========================================
       - name: Evaluate RAG (RAGAS)
         run: |
           python scripts/evaluate_rag_llm.py
+
+
+      # ==========================================
+      # Save evaluation results
+      # ==========================================
+      - name: Upload evaluation results
+        uses: actions/upload-artifact@v4
+        with:
+          name: mistral-evaluation-results
+          path: |
+            evaluation_results.csv
+            evaluation_results.json

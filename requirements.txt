@@ -1,15 +1,18 @@
 fastapi
 uvicorn
+
 sentence-transformers
 transformers
 torch
+accelerate
+
 faiss-cpu
 numpy
 pandas
 requests
 datasets
-pytest
 scikit-learn
+pytest
 
 langchain==0.1.20
 langchain-community==0.0.38
