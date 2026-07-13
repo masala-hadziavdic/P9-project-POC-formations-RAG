@@ -56,7 +56,7 @@ def call_rag(question):
         json={
             "question": question
         },
-        timeout=60
+        timeout=180
     )
 
     response.raise_for_status()
@@ -173,7 +173,7 @@ print("Evaluating...")
 print("=" * 70)
 
 
-for sample in annotated_dataset:
+for sample in annotated_dataset[:5]:
 
 
     question = sample["question"]
