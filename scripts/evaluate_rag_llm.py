@@ -173,7 +173,7 @@ print("Evaluating...")
 print("=" * 70)
 
 
-for sample in annotated_dataset[:5]:
+for sample in annotated_dataset[:17]:
 
 
     question = sample["question"]
