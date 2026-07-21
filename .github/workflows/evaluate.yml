@@ -1,4 +1,4 @@
-name: Evaluate RAG
+name: Evaluate RAG CI
 
 on:
   push:
