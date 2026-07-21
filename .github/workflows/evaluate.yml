@@ -4,10 +4,26 @@ on:
   push:
     branches:
       - main
+    paths:
+      - "scripts/**"
+      - "rag/**"
+      - "api/**"
+      - "tests/**"
+      - "data/annotated_dataset.json"
+      - "pyproject.toml"
+      - "requirements.txt"
 
-  pull_request:
+    pull_request:
     branches:
       - main
+    paths:
+      - "scripts/**"
+      - "rag/**"
+      - "api/**"
+      - "tests/**"
+      - "data/annotated_dataset.json"
+      - "pyproject.toml"
+      - "requirements.txt"
 
 
 jobs:
