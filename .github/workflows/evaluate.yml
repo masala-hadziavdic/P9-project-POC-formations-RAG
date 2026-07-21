@@ -13,7 +13,7 @@ on:
       - "pyproject.toml"
       - "requirements.txt"
 
-    pull_request:
+  pull_request:
     branches:
       - main
     paths:
@@ -24,7 +24,6 @@ on:
       - "data/annotated_dataset.json"
       - "pyproject.toml"
       - "requirements.txt"
-
 
 jobs:
   evaluate:
