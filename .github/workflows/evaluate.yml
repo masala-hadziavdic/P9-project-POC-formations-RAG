@@ -12,6 +12,7 @@ on:
       - "data/annotated_dataset.json"
       - "pyproject.toml"
       - "requirements.txt"
+      - ".github/workflows/evaluate.yml"
 
 jobs:
   evaluate:
