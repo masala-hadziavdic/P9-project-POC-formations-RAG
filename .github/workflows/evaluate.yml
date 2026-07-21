@@ -1,4 +1,4 @@
-name: Evaluate RAG CI
+name: Evaluate RAG
 
 on:
   push:
@@ -15,7 +15,6 @@ on:
 
 jobs:
   evaluate:
-
     runs-on: ubuntu-latest
 
     env:
